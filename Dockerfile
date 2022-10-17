@@ -6,9 +6,10 @@ ARG LIBARIBB24_VERSION=1.0.3
 ARG LIBARIBB24_URL="https://github.com/nkoriyama/aribb24/archive/v$LIBARIBB24_VERSION.tar.gz"
 ARG LIBARIBB24_SHA256=f61560738926e57f9173510389634d8c06cabedfa857db4b28fb7704707ff128
 
-# bump: alpine /FROM alpine:([\d.]+)/ docker:alpine|^3
-# bump: alpine link "Release notes" https://alpinelinux.org/posts/Alpine-$LATEST-released.html
-FROM alpine:3.16.2 AS base
+# Must be specified
+ARG ALPINE_VERSION
+
+FROM alpine:${ALPINE_VERSION} AS base
 
 FROM base AS download
 ARG LIBARIBB24_URL
@@ -34,6 +35,11 @@ RUN \
   autoreconf -fiv && \
   ./configure --enable-static --disable-shared && \
   make -j$(nproc) && make install && \
+  # Sanity tests
+  pkg-config --exists --modversion --path aribb24 && \
+  ar -t /usr/local/lib/libaribb24.a && \
+  readelf -h /usr/local/lib/libaribb24.a && \
+  # Cleanup
   apk del build
 
 FROM scratch
