@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 
 # bump: libaribb24 /LIBARIBB24_VERSION=([\d.]+)/ https://github.com/nkoriyama/aribb24.git|*
 # bump: libaribb24 after ./hashupdate Dockerfile LIBARIBB24 $LATEST
